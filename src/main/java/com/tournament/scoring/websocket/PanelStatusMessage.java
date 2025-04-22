@@ -1,0 +1,14 @@
+package com.tournament.scoring.websocket;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PanelStatusMessage {
+    private Long tournamentId;
+    private int judgesSubmitted;
+    private int totalJudges;
+}
