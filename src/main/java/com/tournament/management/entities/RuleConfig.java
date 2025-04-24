@@ -23,11 +23,7 @@ public class RuleConfig {
     private Integer round;
 
     @ManyToOne
-    @JoinColumn(name = "tournament_id")
-    private Tournament tournament;
-
-    @ManyToOne
     @JoinColumn(name = "rule_set_id")
     private RuleSet ruleSet;
-
 }
+

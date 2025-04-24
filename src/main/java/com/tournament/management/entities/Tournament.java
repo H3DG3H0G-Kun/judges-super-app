@@ -2,9 +2,7 @@ package com.tournament.management.entities;
 
 import com.tournament.common.enums.SportType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +18,9 @@ public class Tournament {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String tenantId;
+
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -29,15 +30,17 @@ public class Tournament {
 
     private Boolean usesJudgePanel;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tournament_id")
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
     private List<Division> divisions;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tournament_id")
-    private List<RuleConfig> ruleConfigs;
+    @ManyToMany
+    @JoinTable(
+            name = "tournament_rule_sets",
+            joinColumns = @JoinColumn(name = "tournament_id"),
+            inverseJoinColumns = @JoinColumn(name = "rule_set_id")
+    )
+    private List<RuleSet> ruleSets;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "tournament_id")
+    @OneToOne(mappedBy = "tournament", cascade = CascadeType.ALL)
     private JudgePanelConfig judgePanel;
 }

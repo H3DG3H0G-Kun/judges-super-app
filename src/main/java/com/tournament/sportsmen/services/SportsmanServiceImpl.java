@@ -3,13 +3,13 @@ package com.tournament.sportsmen.services;
 import com.tournament.common.enums.SportsmanRegistrationStatus;
 import com.tournament.management.entities.Division;
 import com.tournament.management.entities.Tournament;
+import com.tournament.management.repositories.DivisionRepository;
 import com.tournament.management.repositories.TournamentRepository;
 import com.tournament.sportsmen.dtos.RegisterSportsmanRequest;
 import com.tournament.sportsmen.dtos.SportsmanResponse;
 import com.tournament.sportsmen.dtos.StatusChangeRequest;
 import com.tournament.sportsmen.entities.Sportsman;
-import com.tournament.sportsmen.mappers.SportsmanMapper;
-import com.tournament.management.repositories.DivisionRepository;
+import com.tournament.sportsmen.helpers.SportsmanMapperService;
 import com.tournament.sportsmen.repositories.SportsmanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class SportsmanServiceImpl implements SportsmanService {
     private final SportsmanRepository repository;
     private final TournamentRepository tournamentRepository;
     private final DivisionRepository divisionRepository;
-    private final SportsmanMapper mapper;
+    private final SportsmanMapperService mapper;
 
     @Override
     public SportsmanResponse register(RegisterSportsmanRequest request) {

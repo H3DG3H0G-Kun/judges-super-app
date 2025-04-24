@@ -2,10 +2,7 @@ package com.tournament.judges.entities;
 
 import com.tournament.management.entities.JudgePanelConfig;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "judges")
@@ -18,6 +15,9 @@ public class Judge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String tenantId;
 
     private String name;
 

@@ -4,6 +4,7 @@ import com.tournament.sportsmen.dtos.RegisterSportsmanRequest;
 import com.tournament.sportsmen.dtos.SportsmanResponse;
 import com.tournament.sportsmen.dtos.StatusChangeRequest;
 import com.tournament.sportsmen.services.SportsmanService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,10 @@ public class SportsmanController {
     private final SportsmanService service;
 
     @PostMapping
-    public ResponseEntity<SportsmanResponse> register(@RequestBody RegisterSportsmanRequest request) {
+    public ResponseEntity<SportsmanResponse> register(@Valid @RequestBody RegisterSportsmanRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
+
 
     @GetMapping("/tournament/{tournamentId}")
     public ResponseEntity<List<SportsmanResponse>> getByTournament(@PathVariable Long tournamentId) {

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RuleConfigRequest {
-    private String ruleKey;       // "TECHNIQUE"
-    private String ruleLabel;     // "Technique"
+    private String ruleKey;
+    private String ruleLabel;
     private Integer maxScore;
     private Boolean required;
     private Integer round;

@@ -3,7 +3,7 @@ package com.tournament.judges.services;
 import com.tournament.judges.dtos.CreateJudgeRequest;
 import com.tournament.judges.dtos.JudgeResponse;
 import com.tournament.judges.entities.Judge;
-import com.tournament.judges.mappers.JudgeMapper;
+import com.tournament.judges.helpers.JudgeMapperService;
 import com.tournament.judges.repositories.JudgeRepository;
 import com.tournament.management.entities.JudgePanelConfig;
 import com.tournament.management.entities.Tournament;
@@ -19,7 +19,7 @@ import java.util.List;
 public class JudgeServiceImpl implements JudgeService {
 
     private final JudgeRepository judgeRepo;
-    private final JudgeMapper mapper;
+    private final JudgeMapperService mapper;
     private final TournamentRepository tournamentRepo;
     private final JudgePanelConfigRepository panelRepo;
 
@@ -44,7 +44,7 @@ public class JudgeServiceImpl implements JudgeService {
     public List<JudgeResponse> getJudgesByTournament(Long tournamentId) {
         return judgeRepo.findByPanel_Tournament_Id(tournamentId)
                 .stream()
-                .map(mapper::toResponse)
+                .map(judge -> mapper.toResponse((Judge) judge))
                 .toList();
     }
 }

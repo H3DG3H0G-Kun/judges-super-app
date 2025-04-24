@@ -4,9 +4,7 @@ import com.tournament.common.enums.SportsmanRegistrationStatus;
 import com.tournament.management.entities.Division;
 import com.tournament.management.entities.Tournament;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "sportsmen")
@@ -18,6 +16,9 @@ public class Sportsman {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String tenantId;
 
     private String fullName;
     private Integer age;
@@ -38,4 +39,3 @@ public class Sportsman {
     @JoinColumn(name = "division_id", nullable = false)
     private Division division;
 }
-

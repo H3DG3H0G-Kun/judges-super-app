@@ -4,44 +4,43 @@ import com.tournament.management.dtos.CreateRuleSetRequest;
 import com.tournament.management.dtos.RuleSetResponse;
 import com.tournament.management.entities.RuleConfig;
 import com.tournament.management.entities.RuleSet;
-import com.tournament.management.mappers.RuleConfigMapper;
-import com.tournament.management.mappers.RuleSetMapper;
+import com.tournament.management.helpers.RuleConfigMapperService;
+import com.tournament.management.helpers.RuleSetMapperService;
 import com.tournament.management.repositories.RuleConfigRepository;
 import com.tournament.management.repositories.RuleSetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RuleSetServiceImpl implements RuleSetService {
 
     private final RuleSetRepository ruleSetRepo;
-    private final RuleSetMapper ruleSetMapper;
-    private final RuleConfigMapper ruleConfigMapper;
+    private final RuleSetMapperService ruleSetMapper;
     private final RuleConfigRepository ruleConfigRepo;
+    private final RuleConfigMapperService ruleConfigMapper;
 
     @Override
     public RuleSetResponse save(CreateRuleSetRequest request) {
-        RuleSet ruleSet = RuleSet.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .build();
+        RuleSet ruleSet = new RuleSet();
+        ruleSet.setName(request.getName());
+        ruleSet.setDescription(request.getDescription());
 
-        RuleSet saved = ruleSetRepo.save(ruleSet);
-
-        List<RuleConfig> rules = request.getRules().stream()
+        List<RuleConfig> ruleConfigs = request.getRules().stream()
                 .map(ruleReq -> {
                     RuleConfig rule = ruleConfigMapper.toEntity(ruleReq);
-                    rule.setRuleSet(saved);
+                    rule.setRuleSet(ruleSet);
                     return rule;
-                }).toList();
+                })
+                .collect(Collectors.toList());
 
-        ruleConfigRepo.saveAll(rules);
-        saved.setRuleConfigs(rules);
+        ruleSet.setRuleConfigs(ruleConfigs);
+        RuleSet savedRuleSet = ruleSetRepo.save(ruleSet);
 
-        return ruleSetMapper.toResponse(saved);
+        return ruleSetMapper.toResponse(savedRuleSet);
     }
 
     @Override

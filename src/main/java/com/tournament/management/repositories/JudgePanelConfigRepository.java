@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface JudgePanelConfigRepository extends JpaRepository<JudgePanelConfig, Long> {
     Optional<JudgePanelConfig> findByTournament(Tournament tournament);
+    Optional<JudgePanelConfig> findByTournamentId(Long tournamentId);
+
 }

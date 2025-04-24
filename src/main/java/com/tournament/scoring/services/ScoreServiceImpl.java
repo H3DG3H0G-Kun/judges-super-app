@@ -5,7 +5,7 @@ import com.tournament.management.repositories.RuleConfigRepository;
 import com.tournament.scoring.dtos.ScoreResponse;
 import com.tournament.scoring.dtos.SubmitScoreRequest;
 import com.tournament.scoring.entities.Score;
-import com.tournament.scoring.mappers.ScoreMapper;
+import com.tournament.scoring.helpers.ScoreMapperService;
 import com.tournament.scoring.repositories.ScoreRepository;
 import com.tournament.sportsmen.entities.Sportsman;
 import com.tournament.sportsmen.repositories.SportsmanRepository;
@@ -21,7 +21,7 @@ public class ScoreServiceImpl implements ScoreService {
     private final ScoreRepository scoreRepo;
     private final SportsmanRepository sportsmanRepo;
     private final RuleConfigRepository ruleRepo;
-    private final ScoreMapper mapper;
+    private final ScoreMapperService mapper;
 
     @Override
     public ScoreResponse submitScore(SubmitScoreRequest request) {
@@ -31,9 +31,10 @@ public class ScoreServiceImpl implements ScoreService {
         RuleConfig rule = ruleRepo.findById(request.getRuleId())
                 .orElseThrow(() -> new RuntimeException("Rule not found"));
 
-        // OPTIONAL: prevent duplicates
+// OPTIONAL: prevent duplicates
         boolean alreadyScored = scoreRepo.findByRuleIdAndSportsmanId(rule.getId(), sportsman.getId())
                 .stream()
+                .map(obj -> (Score) obj)
                 .anyMatch(score -> score.getJudgeName().equals(request.getJudgeName()));
 
         if (alreadyScored) {
@@ -54,7 +55,7 @@ public class ScoreServiceImpl implements ScoreService {
     public List<ScoreResponse> getScoresForSportsman(Long sportsmanId) {
         return scoreRepo.findBySportsmanId(sportsmanId)
                 .stream()
-                .map(mapper::toResponse)
+                .map(obj -> mapper.toResponse((Score) obj))
                 .toList();
     }
 }

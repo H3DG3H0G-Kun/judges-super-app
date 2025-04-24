@@ -1,6 +1,8 @@
 package com.tournament.scoring.services;
 
 import com.tournament.common.websocket.WebSocketPublisher;
+import com.tournament.management.entities.JudgePanelConfig;
+import com.tournament.management.repositories.JudgePanelConfigRepository;
 import com.tournament.scoring.entities.JudgeScore;
 import com.tournament.scoring.enums.WebSocketTopic;
 import com.tournament.scoring.repositories.JudgeScoreRepository;
@@ -18,6 +20,7 @@ public class ScoringServiceImpl implements ScoringService {
 
     private final JudgeScoreRepository judgeScoreRepository;
     private final WebSocketPublisher publisher;
+    private final JudgePanelConfigRepository judgePanelConfigRepository;
 
     @Override
     public void submitScore(ScoreBroadcastMessage msg) {
@@ -38,7 +41,10 @@ public class ScoringServiceImpl implements ScoringService {
                 msg.getTournamentId(), msg.getSportsmanId()
         );
 
-        int total = 5; // TODO: fetch from JudgePanelConfig or config
+        int total = judgePanelConfigRepository.findByTournamentId(msg.getTournamentId())
+                .map(JudgePanelConfig::getTotalJudges)
+                .orElse(5);
+
         boolean allDone = scores.size() >= total;
 
         publisher.send(WebSocketTopic.SCORES, msg.getTournamentId(), msg);

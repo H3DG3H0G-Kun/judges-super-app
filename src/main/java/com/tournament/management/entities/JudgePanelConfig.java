@@ -1,9 +1,7 @@
 package com.tournament.management.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -17,6 +15,9 @@ public class JudgePanelConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String tenantId;
 
     private Integer totalJudges;
     private Boolean allowOverride;

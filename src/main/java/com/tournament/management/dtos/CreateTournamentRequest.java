@@ -20,6 +20,6 @@ public class CreateTournamentRequest {
     private Boolean usesJudgePanel;
 
     private List<DivisionRequest> divisions;
-    private List<RuleConfigRequest> ruleConfigs;
+    private List<Long> ruleSetIds;
     private JudgePanelRequest judgePanel;
 }

@@ -2,9 +2,12 @@ package com.tournament.management.services;
 
 import com.tournament.management.dtos.CreateTournamentRequest;
 import com.tournament.management.dtos.TournamentResponse;
+import com.tournament.management.entities.RuleSet;
 import com.tournament.management.entities.Tournament;
-import com.tournament.management.mappers.TournamentMapper;
+import com.tournament.management.helpers.TournamentMapperService;
+import com.tournament.management.repositories.RuleSetRepository;
 import com.tournament.management.repositories.TournamentRepository;
+import com.tournament.tenant.TenantContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +18,26 @@ import java.util.List;
 public class TournamentServiceImpl implements TournamentService {
 
     private final TournamentRepository tournamentRepository;
-    private final TournamentMapper tournamentMapper;
+    private final TournamentMapperService tournamentMapper;
+    private final RuleSetRepository ruleSetRepository;
+
 
     @Override
     public TournamentResponse createTournament(CreateTournamentRequest request) {
-        Tournament mappedTournament = tournamentMapper.toEntity(request);
+        Tournament tournament = tournamentMapper.toEntity(request);
+        tournament.setTenantId(TenantContextHolder.getTenantId());
 
-        if (mappedTournament.getRuleConfigs() != null) {
-            mappedTournament.getRuleConfigs().forEach(rule -> rule.setTournament(mappedTournament));
+        List<RuleSet> ruleSets = ruleSetRepository.findAllById(request.getRuleSetIds());
+        tournament.setRuleSets(ruleSets);
+
+        if (tournament.getDivisions() != null) {
+            tournament.getDivisions().forEach(division -> division.setTournament(tournament));
         }
-        if (mappedTournament.getDivisions() != null) {
-            mappedTournament.getDivisions().forEach(division -> division.setTournament(mappedTournament));
-        }
-        if (mappedTournament.getJudgePanel() != null) {
-            mappedTournament.getJudgePanel().setTournament(mappedTournament);
+        if (tournament.getJudgePanel() != null) {
+            tournament.getJudgePanel().setTournament(tournament);
         }
 
-        Tournament savedTournament = tournamentRepository.save(mappedTournament);
+        Tournament savedTournament = tournamentRepository.save(tournament);
         return tournamentMapper.toResponse(savedTournament);
 
     }
