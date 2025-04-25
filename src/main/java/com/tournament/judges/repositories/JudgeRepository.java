@@ -2,14 +2,12 @@ package com.tournament.judges.repositories;
 
 import com.tournament.judges.entities.Judge;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 
+@Repository
 public interface JudgeRepository extends JpaRepository<Judge, Long> {
-    List<Judge> findByTenantIdAndPanel_Tournament_Id(String tenantId, Long tournamentId);
 
-    List<Judge> findByTenantIdAndPanel_Tournament_IdAndRole(String tenantId, Long tournamentId, String role);
-
-    Collection<Object> findByPanel_Tournament_Id(Long tournamentId);
+    List<Judge> findByPanel_Tournament_IdAndTenantId(Long tournamentId, String tenantId);
 }

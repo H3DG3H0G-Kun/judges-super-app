@@ -1,5 +1,6 @@
 package com.tournament.scoring.entities;
 
+import com.tournament.common.tenancy.TenantScopedEntity;
 import com.tournament.management.entities.RuleConfig;
 import com.tournament.sportsmen.entities.Sportsman;
 import jakarta.persistence.*;
@@ -10,14 +11,11 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Score {
+public class Score extends TenantScopedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String tenantId;
 
     @ManyToOne
     @JoinColumn(name = "sportsman_id", nullable = false)

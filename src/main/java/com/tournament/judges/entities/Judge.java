@@ -1,5 +1,6 @@
 package com.tournament.judges.entities;
 
+import com.tournament.common.tenancy.TenantScopedEntity;
 import com.tournament.management.entities.JudgePanelConfig;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Judge {
+public class Judge extends TenantScopedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

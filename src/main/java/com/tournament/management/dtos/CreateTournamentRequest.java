@@ -1,6 +1,7 @@
 package com.tournament.management.dtos;
 
 import com.tournament.common.enums.SportType;
+import com.tournament.judges.dtos.JudgeAssignmentRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,4 +23,7 @@ public class CreateTournamentRequest {
     private List<DivisionRequest> divisions;
     private List<Long> ruleSetIds;
     private JudgePanelRequest judgePanel;
+
+    private List<JudgeAssignmentRequest> judgeAssignments;
+
 }

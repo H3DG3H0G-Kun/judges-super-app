@@ -11,6 +11,7 @@ import com.tournament.sportsmen.dtos.StatusChangeRequest;
 import com.tournament.sportsmen.entities.Sportsman;
 import com.tournament.sportsmen.helpers.SportsmanMapperService;
 import com.tournament.sportsmen.repositories.SportsmanRepository;
+import com.tournament.tenant.TenantContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +28,15 @@ public class SportsmanServiceImpl implements SportsmanService {
 
     @Override
     public SportsmanResponse register(RegisterSportsmanRequest request) {
+        String tenantId = TenantContextHolder.getTenantId();
+
         Tournament tournament = tournamentRepository.findById(request.getTournamentId())
-                .orElseThrow(() -> new RuntimeException("Tournament not found"));
+                .filter(t -> tenantId.equals(t.getTenantId()))
+                .orElseThrow(() -> new RuntimeException("Tournament not found or access denied"));
+
         Division division = divisionRepository.findById(request.getDivisionId())
-                .orElseThrow(() -> new RuntimeException("Division not found"));
+                .filter(d -> tenantId.equals(d.getTenantId()))
+                .orElseThrow(() -> new RuntimeException("Division not found or access denied"));
 
         Sportsman sportsman = new Sportsman();
         sportsman.setFullName(request.getFullName());
@@ -47,20 +53,20 @@ public class SportsmanServiceImpl implements SportsmanService {
 
     @Override
     public List<SportsmanResponse> getByTournament(Long tournamentId) {
-        return repository.findByTournamentId(tournamentId)
+        return repository.findByTournamentIdAndTenantId(tournamentId, TenantContextHolder.getTenantId())
                 .stream().map(mapper::toResponse).toList();
     }
 
     @Override
     public List<SportsmanResponse> getPending() {
-        return repository.findByStatus(SportsmanRegistrationStatus.PENDING)
+        return repository.findByStatusAndTenantId(String.valueOf(SportsmanRegistrationStatus.PENDING), TenantContextHolder.getTenantId())
                 .stream().map(mapper::toResponse).toList();
     }
 
     @Override
     public SportsmanResponse changeStatus(Long id, StatusChangeRequest request) {
-        Sportsman sportsman = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sportsman not found"));
+        Sportsman sportsman = repository.findByIdAndTenantId(id, TenantContextHolder.getTenantId())
+                .orElseThrow(() -> new RuntimeException("Sportsman not found or access denied"));
 
         sportsman.setStatus(request.getStatus());
 
@@ -72,4 +78,5 @@ public class SportsmanServiceImpl implements SportsmanService {
 
         return mapper.toResponse(repository.save(sportsman));
     }
+
 }

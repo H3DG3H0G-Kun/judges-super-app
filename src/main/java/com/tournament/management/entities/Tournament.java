@@ -1,25 +1,27 @@
 package com.tournament.management.entities;
 
 import com.tournament.common.enums.SportType;
+import com.tournament.common.tenancy.TenantListener;
+import com.tournament.common.tenancy.TenantScopedEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "tournaments")
+@EntityListeners(TenantListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tournament {
+public class Tournament extends TenantScopedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private String tenantId;
 
     private String name;
     private LocalDate startDate;
@@ -30,7 +32,7 @@ public class Tournament {
 
     private Boolean usesJudgePanel;
 
-    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "tournament")
     private List<Division> divisions;
 
     @ManyToMany
@@ -41,6 +43,6 @@ public class Tournament {
     )
     private List<RuleSet> ruleSets;
 
-    @OneToOne(mappedBy = "tournament", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "tournament")
     private JudgePanelConfig judgePanel;
 }

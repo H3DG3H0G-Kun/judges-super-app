@@ -1,6 +1,7 @@
 package com.tournament.sportsmen.entities;
 
 import com.tournament.common.enums.SportsmanRegistrationStatus;
+import com.tournament.common.tenancy.TenantScopedEntity;
 import com.tournament.management.entities.Division;
 import com.tournament.management.entities.Tournament;
 import jakarta.persistence.*;
@@ -11,7 +12,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sportsman {
+public class Sportsman extends TenantScopedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

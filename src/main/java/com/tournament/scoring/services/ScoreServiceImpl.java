@@ -3,12 +3,15 @@ package com.tournament.scoring.services;
 import com.tournament.management.entities.RuleConfig;
 import com.tournament.management.repositories.RuleConfigRepository;
 import com.tournament.scoring.dtos.ScoreResponse;
+import com.tournament.scoring.dtos.ScoreSummaryDTO;
 import com.tournament.scoring.dtos.SubmitScoreRequest;
+import com.tournament.scoring.dtos.TournamentResultDTO;
 import com.tournament.scoring.entities.Score;
 import com.tournament.scoring.helpers.ScoreMapperService;
 import com.tournament.scoring.repositories.ScoreRepository;
 import com.tournament.sportsmen.entities.Sportsman;
 import com.tournament.sportsmen.repositories.SportsmanRepository;
+import com.tournament.tenant.TenantContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +21,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScoreServiceImpl implements ScoreService {
 
-    private final ScoreRepository scoreRepo;
-    private final SportsmanRepository sportsmanRepo;
-    private final RuleConfigRepository ruleRepo;
-    private final ScoreMapperService mapper;
+    private final ScoreRepository scoreRepository;
+    private final SportsmanRepository sportsmanRepository;
+    private final RuleConfigRepository ruleConfigRepository;
+    private final ScoreMapperService scoreMapperService;
+    private final ScoreAggregationService scoreAggregationService;
 
     @Override
     public ScoreResponse submitScore(SubmitScoreRequest request) {
-        Sportsman sportsman = sportsmanRepo.findById(request.getSportsmanId())
-                .orElseThrow(() -> new RuntimeException("Sportsman not found"));
+        String tenantId = TenantContextHolder.getTenantId();
 
-        RuleConfig rule = ruleRepo.findById(request.getRuleId())
-                .orElseThrow(() -> new RuntimeException("Rule not found"));
+        Sportsman sportsman = sportsmanRepository.findById(request.getSportsmanId())
+                .filter(s -> tenantId.equals(s.getTenantId()))
+                .orElseThrow(() -> new RuntimeException("Sportsman not found or access denied"));
 
-// OPTIONAL: prevent duplicates
-        boolean alreadyScored = scoreRepo.findByRuleIdAndSportsmanId(rule.getId(), sportsman.getId())
+        RuleConfig rule = ruleConfigRepository.findById(request.getRuleId())
+                .filter(r -> tenantId.equals(r.getTenantId()))
+                .orElseThrow(() -> new RuntimeException("Rule not found or access denied"));
+
+        boolean alreadyScored = scoreRepository.findByRuleIdAndSportsmanId(rule.getId(), sportsman.getId())
                 .stream()
                 .map(obj -> (Score) obj)
                 .anyMatch(score -> score.getJudgeName().equals(request.getJudgeName()));
@@ -48,14 +55,32 @@ public class ScoreServiceImpl implements ScoreService {
         score.setJudgeName(request.getJudgeName());
         score.setRound(request.getRound() != null ? request.getRound() : 1);
 
-        return mapper.toResponse(scoreRepo.save(score));
+        return scoreMapperService.toResponse(scoreRepository.save(score));
     }
 
     @Override
-    public List<ScoreResponse> getScoresForSportsman(Long sportsmanId) {
-        return scoreRepo.findBySportsmanId(sportsmanId)
-                .stream()
-                .map(obj -> mapper.toResponse((Score) obj))
-                .toList();
+    public List<ScoreResponse> getScoresBySportsman(Long sportsmanId) {
+        List<Score> scores = scoreRepository.findBySportsmanIdAndTenantId(sportsmanId, TenantContextHolder.getTenantId());
+        return scoreMapperService.toResponses(scores);
     }
+
+    @Override
+    public List<ScoreResponse> getScoresByTournament(Long tournamentId) {
+        return scoreMapperService.toResponses(
+                scoreRepository.findBySportsman_Tournament_IdAndTenantId(tournamentId, TenantContextHolder.getTenantId())
+        );
+    }
+
+    @Override
+    public ScoreSummaryDTO getSummaryForRound(Long sportsmanId, Integer round) {
+        String tenantId = TenantContextHolder.getTenantId();
+        return scoreAggregationService.summarizeRound(tenantId, sportsmanId, round);
+    }
+
+    @Override
+    public List<TournamentResultDTO> getTournamentSummary(Long tournamentId) {
+        String tenantId = TenantContextHolder.getTenantId();
+        return scoreAggregationService.summarizeTournament(tenantId, tournamentId);
+    }
+
 }

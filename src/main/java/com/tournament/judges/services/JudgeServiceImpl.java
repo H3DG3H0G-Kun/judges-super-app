@@ -9,6 +9,7 @@ import com.tournament.management.entities.JudgePanelConfig;
 import com.tournament.management.entities.Tournament;
 import com.tournament.management.repositories.JudgePanelConfigRepository;
 import com.tournament.management.repositories.TournamentRepository;
+import com.tournament.tenant.TenantContextHolder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +19,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JudgeServiceImpl implements JudgeService {
 
-    private final JudgeRepository judgeRepo;
-    private final JudgeMapperService mapper;
-    private final TournamentRepository tournamentRepo;
-    private final JudgePanelConfigRepository panelRepo;
+    private final JudgeRepository judgeRepository;
+    private final JudgeMapperService judgeMapperService;
+    private final TournamentRepository tournamentRepository;
+    private final JudgePanelConfigRepository panelConfigRepository;
 
     @Override
     public JudgeResponse addJudge(CreateJudgeRequest request) {
-        Tournament tournament = tournamentRepo.findById(request.getTournamentId())
+        Tournament tournament = tournamentRepository.findById(request.getTournamentId())
                 .orElseThrow(() -> new RuntimeException("Tournament not found"));
 
-        JudgePanelConfig panel = panelRepo.findByTournament(tournament)
+        JudgePanelConfig panel = panelConfigRepository.findByTournament(tournament)
                 .orElseThrow(() -> new RuntimeException("Judge panel not found"));
 
         Judge judge = Judge.builder()
@@ -37,14 +38,13 @@ public class JudgeServiceImpl implements JudgeService {
                 .panel(panel)
                 .build();
 
-        return mapper.toResponse(judgeRepo.save(judge));
+        return judgeMapperService.toResponse(judgeRepository.save(judge));
     }
 
     @Override
     public List<JudgeResponse> getJudgesByTournament(Long tournamentId) {
-        return judgeRepo.findByPanel_Tournament_Id(tournamentId)
-                .stream()
-                .map(judge -> mapper.toResponse((Judge) judge))
-                .toList();
+        List<Judge> judges = judgeRepository.findByPanel_Tournament_IdAndTenantId(tournamentId, TenantContextHolder.getTenantId());
+        return judgeMapperService.toResponses(judges);
     }
+
 }
