@@ -1,6 +1,5 @@
 package com.tournament.management.helpers;
 
-import com.tournament.common.enums.SportType;
 import com.tournament.management.dtos.*;
 import com.tournament.management.entities.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +32,7 @@ class TournamentMapperServiceTest {
         request.setName("Tournament1");
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusDays(1));
-        request.setSportType(SportType.KARATE);
+        request.setSportName("Karate");
         request.setUsesJudgePanel(true);
         request.setDivisions(List.of(divReq));
         request.setJudgePanel(panelReq);
@@ -41,7 +40,7 @@ class TournamentMapperServiceTest {
         Tournament entity = mapper.toEntity(request);
 
         assertEquals("Tournament1", entity.getName());
-        assertEquals(SportType.KARATE, entity.getSportType());
+        assertEquals("Karate", entity.getSportName());
         assertNotNull(entity.getDivisions());
         assertEquals(1, entity.getDivisions().size());
         assertNotNull(entity.getJudgePanel());
@@ -67,6 +66,7 @@ class TournamentMapperServiceTest {
 
         assertEquals(100L, response.getId());
         assertEquals("Tournament1", response.getName());
+        assertEquals("Karate", response.getSportName());
         assertNotNull(response.getDivisions());
         assertEquals(1, response.getDivisions().size());
         assertNotNull(response.getRuleConfigs());
@@ -91,8 +91,7 @@ class TournamentMapperServiceTest {
         var responses = spyMapper.toResponses(tournaments);
 
         assertEquals(2, responses.size());
-        assertEquals(r1, responses.get(0));  // changed from assertSame to assertEquals
-        assertEquals(r2, responses.get(1));  // changed from assertSame to assertEquals
+        assertEquals(r1, responses.get(0));
+        assertEquals(r2, responses.get(1));
     }
-
 }

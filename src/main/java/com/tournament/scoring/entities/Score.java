@@ -29,7 +29,7 @@ public class Score extends TenantScopedEntity {
     private Double value;
 
     @Column(nullable = false)
-    private String judgeName; // Can be replaced with judge ID/user later
+    private String judgeName;
 
-    private Integer round = 1; // Optional support for multi-round scoring
+    private Integer round = 1;
 }

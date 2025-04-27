@@ -1,17 +1,17 @@
 package com.tournament.management.entities;
 
+import com.tournament.common.tenancy.TenantListener;
 import com.tournament.common.tenancy.TenantScopedEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "divisions")
+@EntityListeners(TenantListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Division extends TenantScopedEntity  {
+public class Division extends TenantScopedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,5 @@
 package com.tournament.management.dtos;
 
-import com.tournament.common.enums.SportType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ public class TournamentResponse {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
-    private SportType sportType;
+    private String sportName;
     private Boolean usesJudgePanel;
 
     private List<DivisionResponse> divisions;

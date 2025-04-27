@@ -22,7 +22,7 @@ public class Judge extends TenantScopedEntity {
 
     private String name;
 
-    private String role; // Must match JudgePanelConfig.roles
+    private String role;
 
     @ManyToOne
     @JoinColumn(name = "panel_id")

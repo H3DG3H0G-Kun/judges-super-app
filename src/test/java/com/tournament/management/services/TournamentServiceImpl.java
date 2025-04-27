@@ -1,6 +1,5 @@
 package com.tournament.management.services;
 
-import com.tournament.common.enums.SportType;
 import com.tournament.management.dtos.CreateTournamentRequest;
 import com.tournament.management.dtos.DivisionRequest;
 import com.tournament.management.dtos.JudgePanelRequest;
@@ -41,27 +40,24 @@ class TournamentServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Set tenant id in context holder for tests
         TenantContextHolder.setTenantId("tenant1");
     }
 
     @Test
     void createTournament_success() {
-        // Prepare request
         CreateTournamentRequest request = new CreateTournamentRequest();
         request.setName("Test Tournament");
         request.setStartDate(LocalDate.now());
         request.setEndDate(LocalDate.now().plusDays(1));
-        request.setSportType(SportType.KARATE);
+        request.setSportName("Karate");
         request.setUsesJudgePanel(true);
         request.setRuleSetIds(List.of(1L, 2L));
         request.setDivisions(List.of(new DivisionRequest("Div1", "Desc1")));
         request.setJudgePanel(new JudgePanelRequest(3, true, false, List.of("ROLE1", "ROLE2")));
 
-        // Prepare entities
         Tournament tournamentEntity = new Tournament();
         tournamentEntity.setName(request.getName());
-        tournamentEntity.setSportType(request.getSportType());
+        tournamentEntity.setSportName(request.getSportName());
 
         List<RuleSet> ruleSets = List.of(new RuleSet(), new RuleSet());
 
@@ -131,10 +127,10 @@ class TournamentServiceImplTest {
 
     @Test
     void deleteTournament_callsRepository() {
-        doNothing().when(tournamentRepository).deleteById(1L);
+        doNothing().when(tournamentRepository).deleteByIdAndTenantId(1L, "tenant1");
 
         tournamentService.deleteTournament(1L);
 
-        verify(tournamentRepository).deleteById(1L);
+        verify(tournamentRepository).deleteByIdAndTenantId(1L, "tenant1");
     }
 }

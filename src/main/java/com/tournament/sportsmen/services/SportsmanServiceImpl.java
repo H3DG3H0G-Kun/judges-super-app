@@ -38,6 +38,12 @@ public class SportsmanServiceImpl implements SportsmanService {
                 .filter(d -> tenantId.equals(d.getTenantId()))
                 .orElseThrow(() -> new RuntimeException("Division not found or access denied"));
 
+        Sportsman sportsman = getSportsman(request, tournament, division);
+
+        return mapper.toResponse(repository.save(sportsman));
+    }
+
+    private static Sportsman getSportsman(RegisterSportsmanRequest request, Tournament tournament, Division division) {
         Sportsman sportsman = new Sportsman();
         sportsman.setFullName(request.getFullName());
         sportsman.setAge(request.getAge());
@@ -46,9 +52,9 @@ public class SportsmanServiceImpl implements SportsmanService {
         sportsman.setCountry(request.getCountry());
         sportsman.setTournament(tournament);
         sportsman.setDivision(division);
+        sportsman.setTenantId(TenantContextHolder.getTenantId());
         sportsman.setStatus(SportsmanRegistrationStatus.PENDING);
-
-        return mapper.toResponse(repository.save(sportsman));
+        return sportsman;
     }
 
     @Override

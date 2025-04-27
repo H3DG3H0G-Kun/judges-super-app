@@ -41,7 +41,6 @@ public class ScoreServiceImpl implements ScoreService {
 
         boolean alreadyScored = scoreRepository.findByRuleIdAndSportsmanId(rule.getId(), sportsman.getId())
                 .stream()
-                .map(obj -> (Score) obj)
                 .anyMatch(score -> score.getJudgeName().equals(request.getJudgeName()));
 
         if (alreadyScored) {
@@ -54,14 +53,16 @@ public class ScoreServiceImpl implements ScoreService {
         score.setValue(request.getValue());
         score.setJudgeName(request.getJudgeName());
         score.setRound(request.getRound() != null ? request.getRound() : 1);
+        score.setTenantId(tenantId);
 
         return scoreMapperService.toResponse(scoreRepository.save(score));
     }
 
     @Override
     public List<ScoreResponse> getScoresBySportsman(Long sportsmanId) {
-        List<Score> scores = scoreRepository.findBySportsmanIdAndTenantId(sportsmanId, TenantContextHolder.getTenantId());
-        return scoreMapperService.toResponses(scores);
+        return scoreMapperService.toResponses(
+                scoreRepository.findBySportsmanIdAndTenantId(sportsmanId, TenantContextHolder.getTenantId())
+        );
     }
 
     @Override
@@ -73,14 +74,15 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     public ScoreSummaryDTO getSummaryForRound(Long sportsmanId, Integer round) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return scoreAggregationService.summarizeRound(tenantId, sportsmanId, round);
+        return scoreAggregationService.summarizeRound(
+                TenantContextHolder.getTenantId(), sportsmanId, round
+        );
     }
 
     @Override
     public List<TournamentResultDTO> getTournamentSummary(Long tournamentId) {
-        String tenantId = TenantContextHolder.getTenantId();
-        return scoreAggregationService.summarizeTournament(tenantId, tournamentId);
+        return scoreAggregationService.summarizeTournament(
+                TenantContextHolder.getTenantId(), tournamentId
+        );
     }
-
 }

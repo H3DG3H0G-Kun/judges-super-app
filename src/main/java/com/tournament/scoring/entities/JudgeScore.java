@@ -20,7 +20,9 @@ public class JudgeScore {
     private Long judgeId;
 
     private String judgeName;
+
     private Integer score;
+
+    @Column(nullable = false)
     private Boolean finalized = false;
 }
-

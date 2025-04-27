@@ -15,8 +15,9 @@ public class RuleConfigMapperService {
         config.setRuleKey(request.getRuleKey());
         config.setRuleLabel(request.getRuleLabel());
         config.setMaxScore(request.getMaxScore());
-        config.setRequired(request.getRequired());
-        config.setRound(request.getRound());
+        config.setMinScore(request.getMinScore());
+        config.setWeight(request.getWeight());
+        config.setFormulaType(request.getFormulaType());
         return config;
     }
 
@@ -26,8 +27,9 @@ public class RuleConfigMapperService {
         res.setRuleKey(config.getRuleKey());
         res.setRuleLabel(config.getRuleLabel());
         res.setMaxScore(config.getMaxScore());
-        res.setRequired(config.getRequired());
-        res.setRound(config.getRound());
+        res.setMinScore(config.getMinScore());
+        res.setWeight(config.getWeight());
+        res.setFormulaType(config.getFormulaType());
         return res;
     }
 

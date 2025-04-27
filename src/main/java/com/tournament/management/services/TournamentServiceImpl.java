@@ -25,7 +25,6 @@ public class TournamentServiceImpl implements TournamentService {
     private final RuleSetRepository ruleSetRepository;
     private final JudgeAssignmentRepository judgeAssignmentRepository;
 
-
     @Override
     public TournamentResponse createTournament(CreateTournamentRequest request) {
         Tournament tournament = tournamentMapper.toEntity(request);
@@ -43,21 +42,23 @@ public class TournamentServiceImpl implements TournamentService {
 
         if (tournament.getJudgePanel() != null) {
             tournament.getJudgePanel().setTournament(tournament);
+            tournament.getJudgePanel().setTenantId(TenantContextHolder.getTenantId());
         }
 
         Tournament savedTournament = tournamentRepository.save(tournament);
 
-        for (JudgeAssignmentRequest assignmentRequest : request.getJudgeAssignments()) {
-            JudgeAssignment assignment = new JudgeAssignment();
-            assignment.setName(assignmentRequest.getName());
-            assignment.setRole(assignmentRequest.getRole());
-            assignment.setTournament(savedTournament);
-            assignment.setTenantId(TenantContextHolder.getTenantId());
-            judgeAssignmentRepository.save(assignment);
+        if (request.getJudgeAssignments() != null) {
+            for (JudgeAssignmentRequest assignmentRequest : request.getJudgeAssignments()) {
+                JudgeAssignment assignment = new JudgeAssignment();
+                assignment.setName(assignmentRequest.getName());
+                assignment.setRole(assignmentRequest.getRole());
+                assignment.setTournament(savedTournament);
+                assignment.setTenantId(TenantContextHolder.getTenantId());
+                judgeAssignmentRepository.save(assignment);
+            }
         }
 
         return tournamentMapper.toResponse(savedTournament);
-
     }
 
     @Override
@@ -77,5 +78,4 @@ public class TournamentServiceImpl implements TournamentService {
     public void deleteTournament(Long id) {
         tournamentRepository.deleteByIdAndTenantId(id, TenantContextHolder.getTenantId());
     }
-
 }

@@ -3,7 +3,6 @@ package com.tournament.management.helpers;
 import com.tournament.management.dtos.CreateTournamentRequest;
 import com.tournament.management.dtos.TournamentResponse;
 import com.tournament.management.entities.Tournament;
-import com.tournament.common.enums.SportType;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class TournamentMapperService {
         t.setName(request.getName());
         t.setStartDate(request.getStartDate());
         t.setEndDate(request.getEndDate());
-        t.setSportType(request.getSportType() != null ? request.getSportType() : SportType.GENERIC);
+        t.setSportName(request.getSportName());
         t.setUsesJudgePanel(request.getUsesJudgePanel());
 
         if (request.getDivisions() != null) {
@@ -48,7 +47,7 @@ public class TournamentMapperService {
         res.setName(tournament.getName());
         res.setStartDate(tournament.getStartDate());
         res.setEndDate(tournament.getEndDate());
-        res.setSportType(tournament.getSportType());
+        res.setSportName(tournament.getSportName());
         res.setUsesJudgePanel(tournament.getUsesJudgePanel());
 
         if (tournament.getDivisions() != null) {

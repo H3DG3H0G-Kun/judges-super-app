@@ -5,13 +5,16 @@ import com.tournament.management.dtos.RuleConfigRequest;
 import com.tournament.management.dtos.RuleSetResponse;
 import com.tournament.management.entities.RuleConfig;
 import com.tournament.management.entities.RuleSet;
+import com.tournament.management.enums.FormulaType;
 import com.tournament.management.helpers.RuleConfigMapperService;
 import com.tournament.management.helpers.RuleSetMapperService;
 import com.tournament.management.repositories.RuleConfigRepository;
 import com.tournament.management.repositories.RuleSetRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +46,7 @@ class RuleSetServiceImplTest {
 
     @Test
     void save_success() {
-        RuleConfigRequest ruleReq = new RuleConfigRequest("key1", "label1", 10, true, 1);
+        RuleConfigRequest ruleReq = new RuleConfigRequest("key1", "label1", 10.0, 0.0, 1.0, FormulaType.AVERAGE_ALL);
         CreateRuleSetRequest request = new CreateRuleSetRequest("RuleSet1", "Desc", List.of(ruleReq));
 
         RuleSet ruleSet = new RuleSet();

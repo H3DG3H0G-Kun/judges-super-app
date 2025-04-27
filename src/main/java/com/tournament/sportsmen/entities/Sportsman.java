@@ -5,7 +5,9 @@ import com.tournament.common.tenancy.TenantScopedEntity;
 import com.tournament.management.entities.Division;
 import com.tournament.management.entities.Tournament;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "sportsmen")

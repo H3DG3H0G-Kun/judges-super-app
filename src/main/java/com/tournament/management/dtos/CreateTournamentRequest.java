@@ -1,6 +1,5 @@
 package com.tournament.management.dtos;
 
-import com.tournament.common.enums.SportType;
 import com.tournament.judges.dtos.JudgeAssignmentRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class CreateTournamentRequest {
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
-    private SportType sportType;
+    private String sportName;
     private Boolean usesJudgePanel;
 
     private List<DivisionRequest> divisions;

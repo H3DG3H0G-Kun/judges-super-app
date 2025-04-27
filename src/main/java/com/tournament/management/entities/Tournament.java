@@ -1,6 +1,5 @@
 package com.tournament.management.entities;
 
-import com.tournament.common.enums.SportType;
 import com.tournament.common.tenancy.TenantListener;
 import com.tournament.common.tenancy.TenantScopedEntity;
 import jakarta.persistence.*;
@@ -27,8 +26,7 @@ public class Tournament extends TenantScopedEntity {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @Enumerated(EnumType.STRING)
-    private SportType sportType;
+    private String sportName;
 
     private Boolean usesJudgePanel;
 
